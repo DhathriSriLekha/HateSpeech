@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hate Speech Classifier</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(to bottom right, #E6F5F8, #F4F9F4);
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header img {
+            width: 40px;
+            margin-right: 10px;
+        }
+
+        /* Container */
+        .container {
+            margin: auto;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 40px 30px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        /* Floating Placeholder Effect */
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 15px;
+            font-size: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            outline: none;
+            resize: none;
+            transition: border-color 0.3s ease;
+        }
+
+        textarea:focus {
+            border-color: #4CAF50;
+            box-shadow: 0px 0px 5px rgba(76, 175, 80, 0.3);
+        }
+
+        textarea::placeholder {
+            color: transparent;
+        }
+
+        label {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            font-size: 16px;
+            color: #aaa;
+            pointer-events: none;
+            transition: all 0.2s ease;
+        }
+
+        textarea:focus + label,
+        textarea:not(:placeholder-shown) + label {
+            top: -10px;
+            left: 12px;
+            font-size: 12px;
+            color: #4CAF50;
+            background: #fff;
+            padding: 0 5px;
+        }
+
+        /* Button */
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: none;
+            margin: 20px auto;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(76, 175, 80, 0.3);
+            border-top: 4px solid #4CAF50;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal h2 {
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+
+        .modal button {
+            margin-top: 15px;
+            background-color: #d9534f;
+        }
+
+        .modal button:hover {
+            background-color: #c9302c;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: auto;
+            text-align: center;
+            padding: 10px;
+            background-color: #f8f9fa;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <img src="https://cdn-icons-png.flaticon.com/512/2728/2728334.png" alt="Logo">
+        Hate Speech Classifier
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <h1>Classify Your Text</h1>
+        <div class="input-wrapper">
+            <textarea id="textInput" placeholder=" "></textarea>
+            <label for="textInput">Enter a sentence to classify</label>
+        </div>
+        <button onclick="classifyText()">Classify</button>
+        <div class="spinner" id="spinner"></div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="resultModal">
+        <div class="modal-content">
+            <h2>Classification Result</h2>
+            <p id="resultText">Your result will appear here</p>
+            <button onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        &copy; 2024 Hate Speech Classifier
+    </div>
+
+    <script>
+        function classifyText() {
+            const text = document.getElementById('textInput').value.trim();
+            const spinner = document.getElementById('spinner');
+            const resultModal = document.getElementById('resultModal');
+            const resultText = document.getElementById('resultText');
+
+            if (!text) {
+                alert('Please enter a sentence to classify.');
+                return;
+            }
+
+            spinner.style.display = 'block';
+
+            fetch('http://127.0.0.1:5000/predict', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: text })
+            })
+            .then(response => response.json())
+            .then(data => {
+                resultText.innerText = 'Prediction: ' + data.prediction;
+                resultModal.style.display = 'flex';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                resultText.innerText = 'Error: Could not classify the text.';
+                resultModal.style.display = 'flex';
+            })
+            .finally(() => {
+                spinner.style.display = 'none';
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('resultModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
