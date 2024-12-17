@@ -26,8 +26,6 @@ def predict():
     
     # Map prediction to labels
     if prediction == 0:
-        result = "Hate Speech"
-    elif prediction == 1:
         result = "Offensive Language"
     else:
         result = "Neutral"
