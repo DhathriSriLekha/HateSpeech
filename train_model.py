@@ -6,10 +6,9 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import joblib  # for saving the model
 
 # Load the dataset
-dataset = pd.read_csv('C:/Users/arive/OneDrive/Desktop/AIML/labeled_data.csv')
+dataset = pd.read_csv('C:/Users/arive/OneDrive/Desktop/AIML/output_file.csv')
 
 # Data preprocessing
-dataset = dataset.drop(columns=['Unnamed: 0', 'count'])  # Drop unwanted columns
 dataset = dataset.dropna(subset=['tweet', 'class'])  # Drop rows with missing text or labels
 
 # Check class distribution
